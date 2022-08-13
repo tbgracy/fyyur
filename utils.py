@@ -1,5 +1,6 @@
 import dateutil.parser
 import babel
+from models import Genre
 
 
 def set_genres(genres, model):
