@@ -4,14 +4,12 @@ from models import Genre
 
 
 def set_genres(genres, model):
-    print(genres)
     for genre in genres:
         stored_genre = Genre.query.filter_by(name=genre).first()
         if stored_genre:
             model.genres.append(stored_genre)
         else:
             model.genres.append(Genre(name=genre))
-    print(model.genres)
     return model
 
 
