@@ -93,7 +93,7 @@ def search_venues():
 
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
-    venue = Venue.query.get(venue_id)
+    venue = Venue.query.get_or_404(venue_id)
     past_shows = Show.query.filter(
         Show.start_time < datetime.now(), Show.venue_id == venue_id).all()
     upcoming_shows = Show.query.filter(
@@ -232,7 +232,7 @@ def search_artists():
 
 @app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
-    artist = Artist.query.get(artist_id)
+    artist = Artist.query.get_or_404(artist_id)
     past_shows = Show.query.filter(Show.artist == artist).filter(
         Show.start_time < datetime.now())
     upcoming_shows = Show.query.filter(Show.artist == artist).filter(
