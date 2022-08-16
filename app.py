@@ -5,11 +5,11 @@
 import json
 from flask import (
     Flask,
-    render_template, 
+    render_template,
     request,
-    Response, 
-    flash, 
-    redirect, 
+    Response,
+    flash,
+    redirect,
     url_for,
 )
 from flask_moment import Moment
@@ -94,9 +94,11 @@ def search_venues():
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
     venue = Venue.query.get_or_404(venue_id)
-    
-    past_shows = [show for show in venue.shows if show.start_time < datetime.now()]
-    upcoming_shows = [show for show in venue.shows if show.start_time > datetime.now()]
+
+    past_shows = [
+        show for show in venue.shows if show.start_time < datetime.now()]
+    upcoming_shows = [
+        show for show in venue.shows if show.start_time > datetime.now()]
 
     data = {
         "id": venue.id,
@@ -149,24 +151,23 @@ def create_venue_form():
 
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
+    form = VenueForm(request.form)
+
     venue = Venue(
-        name=request.form['name'],
-        city=request.form['city'],
-        state=request.form['state'],
-        address=request.form['address'],
-        phone=request.form['phone'],
-        image_link=request.form['image_link'],
-        facebook_link=request.form['facebook_link'],
-        website_link=request.form['website_link'],
+        name=form.name.data,
+        city=form.city.data,
+        state=form.state.data,
+        address=form.address.data,
+        phone=form.phone.data,
+        image_link=form.image_link.data,
+        facebook_link=form.facebook_link.data,
+        website_link=form.website_link.data,
+        seeking_talent=form.seeking_talent.data,
     )
 
     # if a venue is not seeking talent, then it should not make a seeking description
-    try:
-        request.form['seeking_talent']
-        venue.seeking_talent = True
-        venue.seeking_description = request.form['seeking_description']
-    except:
-        venue.seeking_talent = False
+    if venue.seeking_talent:
+        venue.seeking_description = form.seeking_description.data
 
     venue = set_genres(request.form.getlist('genres'), venue)
 
@@ -236,8 +237,10 @@ def search_artists():
 def show_artist(artist_id):
     artist = Artist.query.get_or_404(artist_id)
 
-    past_shows = [show for show in artist.shows if show.start_time < datetime.now()]
-    upcoming_shows = [show for show in artist.shows if show.start_time > datetime.now()]
+    past_shows = [
+        show for show in artist.shows if show.start_time < datetime.now()]
+    upcoming_shows = [
+        show for show in artist.shows if show.start_time > datetime.now()]
 
     data = {
         "id": artist.id,
@@ -250,7 +253,7 @@ def show_artist(artist_id):
         "seeking_description": artist.seeking_description,
         "image_link": artist.image_link,
         "facebook_link": artist.facebook_link,
-        "website_link": artist.website_link,
+        "website": artist.website_link,
         "past_shows": [],
         "upcoming_shows": [],
         "past_shows_count": len(past_shows),
@@ -379,23 +382,23 @@ def create_artist_form():
 
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
+    form = ArtistForm(request.form)
+
     artist = Artist(
-        name=request.form['name'],
-        city=request.form['city'],
-        state=request.form['state'],
-        phone=request.form['phone'],
-        image_link=request.form['image_link'],
-        facebook_link=request.form['facebook_link'],
+        name=form.name.data,
+        city=form.city.data,
+        state=form.state.data,
+        phone=form.phone.data,
+        image_link=form.image_link.data,
+        website_link=form.website_link.data,
+        facebook_link=form.facebook_link.data,
+        seeking_venue=form.seeking_venue.data,
     )
 
     artist = set_genres(request.form.getlist('genres'), artist)
-
-    try:
-        request.form['seeking_venu']
-        artist.seeking_venue = True
-        artist.seeking_description = request.form['seeking_description']
-    except:
-        artist.seeking_venue = False
+    
+    if artist.seeking_venue:
+        artist.seeking_description = form.seeking_description.data
 
     try:
         db.session.add(artist)
@@ -440,7 +443,8 @@ def create_shows():
 
 @app.route('/shows/create', methods=['POST'])
 def create_show_submission():
-    form = ShowForm()
+    form = ShowForm(request.form)
+
     show = Show(
         venue_id=form.venue_id.data,
         artist_id=form.artist_id.data,
