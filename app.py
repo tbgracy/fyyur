@@ -153,6 +153,14 @@ def create_venue_form():
 def create_venue_submission():
     form = VenueForm(request.form)
 
+    if not form.validate():
+        flash('You entered some invalid data.')
+        errors = ""
+        for error in form.errors:
+            errors += form.errors[error][0] + "\n"
+        flash(errors)
+        return render_template('forms/new_venue.html', form=form)
+        
     venue = Venue(
         name=form.name.data,
         city=form.city.data,
@@ -307,7 +315,7 @@ def edit_artist(artist_id):
 
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
-    form = ArtistForm()
+    form = ArtistForm(request.form)
 
     artist = Artist.query.get(artist_id)
 
@@ -344,7 +352,7 @@ def edit_venue(venue_id):
 
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
-    form = VenueForm()
+    form = VenueForm(request.form)
 
     venue = Venue.query.get(venue_id)
 
@@ -383,6 +391,14 @@ def create_artist_form():
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
     form = ArtistForm(request.form)
+
+    if not form.validate():
+        flash("You entered some invalid data.")
+        errors = ""
+        for error in form.errors:
+            errors += form.errors[error][0] + "\n"
+        flash(errors)
+        return render_template('forms/new_artist.html', form=form)
 
     artist = Artist(
         name=form.name.data,
@@ -444,6 +460,14 @@ def create_shows():
 @app.route('/shows/create', methods=['POST'])
 def create_show_submission():
     form = ShowForm(request.form)
+
+    if not form.validate():
+        flash('You entered some invalid data.')
+        errors = ""
+        for error in form.errors:
+            errors += form.errors[error][0] + "\n"
+        flash(errors)
+        return render_template('forms/new_show.html', form=form)
 
     show = Show(
         venue_id=form.venue_id.data,
