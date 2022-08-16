@@ -3,7 +3,15 @@
 #----------------------------------------------------------------------------#
 
 import json
-from flask import Flask, render_template, request, Response, flash, redirect, url_for
+from flask import (
+    Flask,
+    render_template, 
+    request,
+    Response, 
+    flash, 
+    redirect, 
+    url_for,
+)
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 import logging
@@ -199,8 +207,9 @@ def delete_venue(venue_id):
 
 @app.route('/artists')
 def artists():
-    data = [{"id": artist.id, "name": artist.name} for artist in Artist.query.with_entities(Artist.id, Artist.name).all()]
-    
+    data = [{"id": artist.id, "name": artist.name}
+            for artist in Artist.query.with_entities(Artist.id, Artist.name).all()]
+
     return render_template('pages/artists.html', artists=data)
 
 
