@@ -94,10 +94,9 @@ def search_venues():
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
     venue = Venue.query.get_or_404(venue_id)
-    past_shows = Show.query.filter(
-        Show.start_time < datetime.now(), Show.venue_id == venue_id).all()
-    upcoming_shows = Show.query.filter(
-        Show.start_time > datetime.now(), Show.venue_id == venue_id).all()
+    
+    past_shows = [show for show in venue.shows if show.start_time < datetime.now()]
+    upcoming_shows = [show for show in venue.shows if show.start_time > datetime.now()]
 
     data = {
         "id": venue.id,
@@ -116,6 +115,9 @@ def show_venue(venue_id):
         "past_shows_count": len(past_shows),
         "upcoming_shows_count": len(upcoming_shows),
     }
+
+    data['past_shows_count'] = len(past_shows)
+    data['upcoming_shows_count'] = len(upcoming_shows)
 
     for show in past_shows:
         data['past_shows'].append({
@@ -233,10 +235,9 @@ def search_artists():
 @app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
     artist = Artist.query.get_or_404(artist_id)
-    past_shows = Show.query.filter(Show.artist == artist).filter(
-        Show.start_time < datetime.now())
-    upcoming_shows = Show.query.filter(Show.artist == artist).filter(
-        Show.start_time > datetime.now())
+
+    past_shows = [show for show in artist.shows if show.start_time < datetime.now()]
+    upcoming_shows = [show for show in artist.shows if show.start_time > datetime.now()]
 
     data = {
         "id": artist.id,
@@ -252,8 +253,8 @@ def show_artist(artist_id):
         "website_link": artist.website_link,
         "past_shows": [],
         "upcoming_shows": [],
-        "past_shows_count": past_shows.count(),
-        "upcoming_shows_count": upcoming_shows.count(),
+        "past_shows_count": len(past_shows),
+        "upcoming_shows_count": len(upcoming_shows),
     }
 
     for show in past_shows:
