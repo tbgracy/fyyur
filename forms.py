@@ -69,11 +69,12 @@ class VenueForm(Form):
         if not rv:
             return False
         if not is_valid_phone(self.phone.data):
+            self.phone.errors.append('Use a valid phone number format')
             return False
         if not set(self.genres.data).issubset(dict(genre_choices).keys()):
             self.genres.errors.append('Please choose valid genres')
             return False
-        if not set(self.state.data).issubset(dict(state_choices).keys()):
+        if set(self.state.data) not in list(dict(state_choices).keys()):
             self.state.errors.append('Please choose valid state')
             return False
 
